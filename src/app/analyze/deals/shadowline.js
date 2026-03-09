@@ -54,7 +54,7 @@ module.exports = async function shadowline() {
 
 function unrecordFiles (targetDir) {
   const dbPath = global.path.db.stocks
-  const allStocks = require(global.path.db.base_data).data
+  const allStocks = (global.utils.readFileSync(global.path.db.base_data) || {}).data || []
   const result = {
     // [stockCode]: [unRecoedDateFiles]
   }

@@ -1,9 +1,9 @@
 const fs = require('fs')
 const path = require('path')
-const base = require(global.path.db.base_data)
 const codeMap = {}
 const nameMap = {}
 module.exports = function () {
+  const base = global.utils.readFileSync(global.path.db.base_data) || { data: [] }
   base.data.forEach((stockItem) => {
     codeMap[stockItem.code] = stockItem.name
     nameMap[stockItem.name] = stockItem.code
