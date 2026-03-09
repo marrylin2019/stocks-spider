@@ -1,3 +1,4 @@
+const fs = require('fs')
 const path = require('path')
 const quest = require(`./utils/quest`)
 const cmdParam = require(`./utils/cmd-param`)
@@ -38,19 +39,21 @@ module.exports = async function config() {
   global.Mysql = require(path.join(__dirname, 'db-utils\\mysql\\index.js'))
 
   // 资源路径别名
+  const dbHome = global.crossEnv.dbhome || process.env.STOCKS_DB_HOME || path.resolve(__dirname, '../stock-demo')
   global.path = {
     root: path.resolve(__dirname, '../'),
     src: path.join(__dirname),
     utils: path.join(__dirname, 'utils'),
     db_utils: path.join(__dirname, 'db-utils'),
     db: {
-      home: `G:\\my_db\\stocks-spider`,
-      api: `G:\\my_db\\stocks-spider\\api`,
-      dict: `G:\\my_db\\stocks-spider\\dict`,
-      stocks: `G:\\my_db\\stocks-spider\\stocks`,
-      base_data: `G:\\my_db\\stocks-spider\\base.json`
+      home: dbHome,
+      api: path.join(dbHome, 'api'),
+      dict: path.join(dbHome, 'dict'),
+      stocks: path.join(dbHome, 'stocks'),
+      base_data: path.join(dbHome, 'base.json')
     }
   }
+  ensureDbPath(global.path.db)
   // global.srcRoot = __dirname
   // global.root = path.resolve(global.srcRoot, '../')
   // global.utils = path.join(global.srcRoot, 'utils\\index.js')
@@ -66,6 +69,16 @@ module.exports = async function config() {
 
   global.utils = require(path.join(__dirname, 'utils\\index.js'))
   return Promise.resolve(global)
+}
+
+
+function ensureDbPath (dbPath) {
+  [dbPath.home, dbPath.api, dbPath.dict, dbPath.stocks].forEach((dir) => {
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
+  })
+  if (!fs.existsSync(dbPath.base_data)) {
+    fs.writeFileSync(dbPath.base_data, JSON.stringify({ date: 0, data: [] }), 'utf8')
+  }
 }
 
 function getDate () {

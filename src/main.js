@@ -48,7 +48,7 @@
   if (['test'].includes(global.module)) {
     const fs = require('fs')
     const path = require('path')
-    const base = require(global.path.db.base_data)
+    const base = global.utils.readFileSync(global.path.db.base_data) || { data: [] }
     const codeMap = {}
     const nameMap = {}
     base.data.forEach((stockItem) => {

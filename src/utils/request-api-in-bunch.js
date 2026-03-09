@@ -1,4 +1,4 @@
-const allStocks = require(global.path.db.base_data).data
+const readFileSync = require('./read-file-sync')
 const BunchThread = require('./bunch-thread')
 const LogTag = 'utils.requestApiInBunch => '
 /**
@@ -11,6 +11,7 @@ const LogTag = 'utils.requestApiInBunch => '
 module.exports = function requestApiInBunch (apikey, apis, task) {
   return new Promise((resolve) => {
     const unLinkStocks = []
+    const allStocks = (readFileSync(global.path.db.base_data) || {}).data || []
     allStocks.forEach((stockItem) => {
       for (let i = 0; i < apis.length; i++) {
         const urlItem = apis[i]
